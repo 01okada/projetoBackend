@@ -31,10 +31,7 @@ const SingIn = () => {
       // 6. Chamada à API para criar a conta
       const response = await fetch(API_SIGNUP_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // Mude para enviar 'name' e 'password'
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           name: nome, 
           email: email, 
@@ -42,13 +39,14 @@ const SingIn = () => {
         }),
       });
 
+      const data = await response.json().catch(() => ({})); // lê JSON mesmo em erro
+
       if (response.ok) {
         // 7. Sucesso no cadastro
         setSuccess("Conta criada com sucesso! Redirecionando para o login...");
-        // Redireciona para a página de Login após um pequeno atraso
         setTimeout(() => {
           navigate("/"); // A rota "/" é a página de Login (App.jsx)
-        }, 2000);
+        }, 1500);
       } else {
         // 8. Erro no backend (ex: email já existe)
         setError(data.message || "Erro ao tentar cadastrar. Tente novamente.");
@@ -60,43 +58,101 @@ const SingIn = () => {
   };
 
   return (
-    <div>
-      <div className="Titulo2">
-        <h1>Faça seu Cadastro</h1>
-      </div>
-      <div className='container1'>
-        {/* 10. Associa a função de cadastro ao evento onSubmit */}
-        <form onSubmit={handleCadastrar}>
-            
-            {/* Mensagens de feedback */}
-            {error && <p style={{ color: 'red', textAlign: 'center', marginBottom: '10px' }}>{error}</p>}
-            {success && <p style={{ color: 'green', textAlign: 'center', marginBottom: '10px' }}>{success}</p>}
-            
-            <div className='SingNome'>
-              <label htmlFor="nome"><b>Nome</b></label>
-              {/* Captura o valor do Nome */}
-              <input type="text" placeholder='Nome' className="SingNome2" value={nome} onChange={(e) => setNome(e.target.value)} required />
-              <FaUser className='icon' />
+    // Se você já criou a classe .auth-bg (fundo) no Login, pode reaproveitar aqui:
+    <div className="auth-bg d-flex align-items-center">
+      <div className="container-fluid px-3 py-4">
+        <div className="row justify-content-center">
+          <div className="col-12 col-sm-10 col-md-8 col-lg-4 col-xl-3">
+            <div
+              className="card auth-card border-0 shadow-sm rounded-4 mx-auto"
+              style={{ maxWidth: 360 }}
+            >
+              <div className="card-body p-3 p-sm-4">
+                <h1 className="h4 text-center mb-4">Faça seu Cadastro</h1>
+
+                {/* Mensagens de feedback */}
+                {error && (
+                  <div className="alert alert-danger text-center" role="alert">
+                    {error}
+                  </div>
+                )}
+                {success && (
+                  <div className="alert alert-success text-center" role="alert">
+                    {success}
+                  </div>
+                )}
+
+                {/* 10. Associa a função de cadastro ao evento onSubmit */}
+                <form onSubmit={handleCadastrar} noValidate>
+                  {/* Nome */}
+                  <div className="mb-3">
+                    <label htmlFor="nome" className="form-label mb-1"><b>Nome</b></label>
+                    <div className="input-group">
+                      <span className="input-group-text"><FaUser /></span>
+                      <input
+                        id="nome"
+                        type="text"
+                        placeholder="Nome"
+                        className="form-control"
+                        value={nome}
+                        onChange={(e) => setNome(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div className="mb-3">
+                    <label htmlFor="email" className="form-label mb-1"><b>Email</b></label>
+                    <div className="input-group">
+                      <span className="input-group-text"><MdAlternateEmail /></span>
+                      <input
+                        id="email"
+                        type="email"
+                        placeholder="Email"
+                        className="form-control"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        autoComplete="username"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Senha */}
+                  <div className="mb-3">
+                    <label htmlFor="senha" className="form-label mb-1"><b>Senha</b></label>
+                    <div className="input-group">
+                      <span className="input-group-text"><FaLock /></span>
+                      <input
+                        id="senha"
+                        type="password"
+                        placeholder="Senha"
+                        className="form-control"
+                        value={senha}
+                        onChange={(e) => setSenha(e.target.value)}
+                        required
+                        autoComplete="new-password"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Botão */}
+                  <button type="submit" className="btn btn-primary w-100 btn-lg">
+                    <b>Cadastrar</b>
+                  </button>
+
+                  {/* link para login */}
+                  <p className="text-center text-muted mt-3 small">
+                    Já tem conta? <Link to="/">Entrar</Link>
+                  </p>
+                </form>
+
+              </div>
             </div>
-            <div className='SingEmail'>
-              <label htmlFor="Email"><b>Email</b></label>
-              {/* Captura o valor do Email */}
-              <input type="email" placeholder='Email' className="SingEmail2" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              <FaLock className='icon' />
-            </div>
-             <div className='SingSenha'>
-              <label htmlFor="senha"><b>Senha</b></label>
-              {/* Captura o valor da Senha */}
-              <input type="password" placeholder='Senha' className="SingSenha2" value={senha} onChange={(e) => setSenha(e.target.value)} required />
-              <MdAlternateEmail className='icon' />
-             </div>
-             
-             {/* O botão agora submete o formulário */}
-             <button type="submit" className="Cadastrar">
-               <b>Cadastrar</b>
-             </button>
-             
-        </form>
+
+          </div>
+        </div>
       </div>
     </div>
   )
